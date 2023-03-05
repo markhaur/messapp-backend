@@ -26,7 +26,7 @@ func NewServer(service Service, logger log.Logger) http.Handler {
 
 	var handleRemoveUser http.Handler
 	handleRemoveUser = s.handleRemoveUser()
-	handleListUsers = httpLoggingMiddleware(logger, "handleRemoveUser")(handleRemoveUser)
+	handleRemoveUser = httpLoggingMiddleware(logger, "handleRemoveUser")(handleRemoveUser)
 
 	var handleUpdateUser http.Handler
 	handleUpdateUser = s.handleUpdateUser()
