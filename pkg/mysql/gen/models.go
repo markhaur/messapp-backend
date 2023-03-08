@@ -8,6 +8,15 @@ import (
 	"time"
 )
 
+type Reservation struct {
+	ID              int64
+	UserID          int64
+	ReservationTime time.Time
+	Type            int64
+	NoOfGuests      int64
+	CreatedAt       time.Time
+}
+
 type User struct {
 	ID          int64
 	Name        string

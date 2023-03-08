@@ -40,6 +40,8 @@ type ReservationRepository interface {
 	Insert(context.Context, *Reservation) error
 	FindAll(context.Context) ([]Reservation, error)
 	FindByID(context.Context, int64) (*Reservation, error)
+	FindByEmployeeID(context.Context, int64) ([]Reservation, error)
+	FindByDate(context.Context, time.Time) ([]Reservation, error)
 	Update(context.Context, *Reservation) error
 	DeleteByID(context.Context, int64) error
 }
