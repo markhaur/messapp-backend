@@ -34,10 +34,10 @@ func NewServer(service Service, logger log.Logger) http.Handler {
 
 	router := way.NewRouter()
 
-	router.Handle("POST", "/v1/users", handleSaveUser)
-	router.Handle("GET", "/v1/users", handleListUsers)
-	router.Handle("DELETE", "/v1/user/:id", handleRemoveUser)
-	router.Handle("PUT", "/v1/user/:id", handleUpdateUser)
+	router.Handle("POST", "/userlist/v1/users", handleSaveUser)
+	router.Handle("GET", "/userlist/v1/users", handleListUsers)
+	router.Handle("DELETE", "/userlist/v1/user/:id", handleRemoveUser)
+	router.Handle("PUT", "/userlist/v1/user/:id", handleUpdateUser)
 
 	router.NotFound = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { writeError(w, ErrResourceNotFound) })
 
