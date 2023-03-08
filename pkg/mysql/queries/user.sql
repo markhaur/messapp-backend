@@ -1,23 +1,26 @@
---name: GetUser :one
+-- name: GetUserByEmployeeID :one
 SELECT * FROM users
 WHERE employee_id = ? LIMIT 1;
 
---name: ListUsers :many
+-- name: GetUserByID :one
+SELECT * FROM users
+WHERE id = ? LIMIT 1;
+
+-- name: ListUsers :many
 SELECT * FROM users
 ORDER BY name;
 
---name: CreateUser :one
+-- name: CreateUser :execresult
 INSERT INTO users(
     name, password, designation, employee_id
 ) VALUES (
     ?, ?, ?, ?
-)
-RETURNING *;
+);
 
---name: DeleteUser :exec
+-- name: DeleteUser :exec
 DELETE FROM users
 where id = ?;
 
---name: UpdateUser :exec
+-- name: UpdateUser :exec
 UPDATE users SET password = ?
 WHERE id = ?;
