@@ -10,6 +10,7 @@ import (
 type Service interface {
 	Save(context.Context, pkg.Reservation) (*pkg.Reservation, error)
 	List(context.Context) ([]pkg.Reservation, error)
+	// TODO: need to remove
 	Update(context.Context, pkg.Reservation) (*pkg.Reservation, bool, error)
 	Remove(context.Context, int64) error
 }
