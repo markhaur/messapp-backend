@@ -17,7 +17,7 @@ func NewUserRepository(db *sql.DB) pkg.UserRepository {
 }
 
 func (u *userRepository) Insert(ctx context.Context, user *pkg.User) error {
-	inserted, err := u.queries.CreateUser(ctx, gen.CreateUserParams{Name: user.Name, Password: user.Password, Designation: user.Designation, EmployeeID: user.EmployeeID})
+	inserted, err := u.queries.CreateUser(ctx, gen.CreateUserParams{Name: user.Name, Password: user.Password, Designation: user.Designation, EmployeeID: user.EmployeeID, CreatedAt: user.CreatedAt})
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (u *userRepository) FindAll(ctx context.Context) ([]pkg.User, error) {
 
 	var list []pkg.User
 	for _, user := range users {
-		list = append(list, pkg.User{ID: user.ID, Name: user.Name, Password: user.Password, Designation: user.Designation, EmployeeID: user.EmployeeID, CreatedAt: user.CreatedAt})
+		list = append(list, pkg.User{ID: user.ID, Name: user.Name, Password: user.Password, Designation: user.Designation, EmployeeID: user.EmployeeID})
 	}
 	return list, nil
 }

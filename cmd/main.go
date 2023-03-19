@@ -12,6 +12,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/markhaur/messapp-backend/pkg"
+	"github.com/markhaur/messapp-backend/pkg/auth"
 	"github.com/markhaur/messapp-backend/pkg/mysql"
 	"github.com/markhaur/messapp-backend/pkg/reservations"
 	"github.com/markhaur/messapp-backend/pkg/userlist"
@@ -78,9 +79,14 @@ func main() {
 	reservationService = reservations.NewService(reservationRepository)
 	reservationService = reservations.LoggingMiddleware(logger)(reservationService)
 
+	var authService auth.Service
+	authService = auth.NewService(userRepository)
+	authService = auth.LoggingMiddleware(logger)(authService)
+
 	mux := http.NewServeMux()
 	mux.Handle("/userlist/v1/", userlist.NewServer(userService, logger))
 	mux.Handle("/resvlist/v1/", reservations.NewServer(reservationService, logger))
+	mux.Handle("/auth/v1/", auth.NewServer(authService, logger))
 
 	server := &http.Server{
 		Addr:         config.ServerAddress,

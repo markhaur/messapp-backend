@@ -8,13 +8,14 @@ package gen
 import (
 	"context"
 	"database/sql"
+	"time"
 )
 
 const createUser = `-- name: CreateUser :execresult
 INSERT INTO users(
-    name, password, designation, employee_id
+    name, password, designation, employee_id, created_at
 ) VALUES (
-    ?, ?, ?, ?
+    ?, ?, ?, ?, ?
 )
 `
 
@@ -23,6 +24,7 @@ type CreateUserParams struct {
 	Password    string
 	Designation string
 	EmployeeID  string
+	CreatedAt   time.Time
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (sql.Result, error) {
@@ -31,6 +33,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (sql.Res
 		arg.Password,
 		arg.Designation,
 		arg.EmployeeID,
+		arg.CreatedAt,
 	)
 }
 

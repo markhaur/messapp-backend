@@ -136,6 +136,41 @@ func (q *Queries) GetReservationsByEmployeeID(ctx context.Context, userID int64)
 	return items, nil
 }
 
+const listReservations = `-- name: ListReservations :many
+SELECT id, user_id, reservation_time, type, no_of_guests, created_at FROM reservations
+ORDER BY reservation_time desc
+`
+
+func (q *Queries) ListReservations(ctx context.Context) ([]Reservation, error) {
+	rows, err := q.db.QueryContext(ctx, listReservations)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Reservation{}
+	for rows.Next() {
+		var i Reservation
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ReservationTime,
+			&i.Type,
+			&i.NoOfGuests,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateReservation = `-- name: UpdateReservation :exec
 UPDATE reservations SET no_of_guests = ?
 WHERE id = ?

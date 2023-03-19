@@ -10,6 +10,10 @@ WHERE id = ? LIMIT 1;
 SELECT * FROM reservations
 where reservation_time = ?;
 
+-- name: ListReservations :many
+SELECT * FROM reservations
+ORDER BY reservation_time desc;
+
 -- name: CreateReservation :execresult
 INSERT INTO reservations (
     user_id, reservation_time, type, no_of_guests, created_at

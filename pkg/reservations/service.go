@@ -3,6 +3,7 @@ package reservations
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/markhaur/messapp-backend/pkg"
 )
@@ -10,6 +11,9 @@ import (
 type Service interface {
 	Save(context.Context, pkg.Reservation) (*pkg.Reservation, error)
 	List(context.Context) ([]pkg.Reservation, error)
+	FindByID(context.Context, int64) (*pkg.Reservation, error)
+	FindByEmployeeID(context.Context, int64) ([]pkg.Reservation, error)
+	FindByDate(context.Context, time.Time) ([]pkg.Reservation, error)
 	// TODO: need to remove
 	Update(context.Context, pkg.Reservation) (*pkg.Reservation, bool, error)
 	Remove(context.Context, int64) error
@@ -31,6 +35,16 @@ func (s *service) Save(ctx context.Context, reservation pkg.Reservation) (*pkg.R
 		return nil, fmt.Errorf("could not save reservation: %v", err)
 	}
 	return &reservation, nil
+}
+
+func (s *service) FindByID(ctx context.Context, id int64) (*pkg.Reservation, error) {
+	return nil, nil
+}
+func (s *service) FindByEmployeeID(ctx context.Context, id int64) ([]pkg.Reservation, error) {
+	return nil, nil
+}
+func (s *service) FindByDate(ctx context.Context, id time.Time) ([]pkg.Reservation, error) {
+	return nil, nil
 }
 
 func (s service) List(ctx context.Context) ([]pkg.Reservation, error) {

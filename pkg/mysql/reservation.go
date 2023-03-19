@@ -27,8 +27,17 @@ func (r *reservationRepository) Insert(ctx context.Context, reservation *pkg.Res
 	return nil
 }
 
-func (r *reservationRepository) FindAll(context.Context) ([]pkg.Reservation, error) {
-	return nil, nil
+func (r *reservationRepository) FindAll(ctx context.Context) ([]pkg.Reservation, error) {
+	reservations, err := r.queries.ListReservations(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var list []pkg.Reservation
+	for _, reservation := range reservations {
+		list = append(list, pkg.Reservation{ID: reservation.ID, UserID: reservation.UserID, ReservationTime: reservation.ReservationTime, Type: pkg.ReservationType(reservation.Type), NoOfGuests: reservation.NoOfGuests})
+	}
+	return list, nil
 }
 
 func (r *reservationRepository) FindByID(ctx context.Context, id int64) (*pkg.Reservation, error) {

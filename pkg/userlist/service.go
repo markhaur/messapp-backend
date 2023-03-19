@@ -3,6 +3,7 @@ package userlist
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/markhaur/messapp-backend/pkg"
 )
@@ -26,6 +27,7 @@ func NewService(repository pkg.UserRepository) Service {
 }
 
 func (s *service) Save(ctx context.Context, user pkg.User) (*pkg.User, error) {
+	user.CreatedAt = time.Now()
 	if err := s.repository.Insert(ctx, &user); err != nil {
 		return nil, fmt.Errorf("could not save user: %v", err)
 	}

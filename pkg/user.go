@@ -24,6 +24,7 @@ type UserRepository interface {
 	Insert(context.Context, *User) error
 	FindAll(context.Context) ([]User, error)
 	FindByID(context.Context, int64) (*User, error)
+	FindByEmployeeID(context.Context, string) (*User, error)
 	Update(context.Context, *User) error
 	DeleteByID(context.Context, int64) error
 }
