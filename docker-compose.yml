@@ -9,6 +9,8 @@ services:
     restart: always
     ports:
       - 3306:3306
+    volumes:
+      - ./mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: messapp
       MYSQL_DATABASE: messapp
