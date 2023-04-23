@@ -12,9 +12,9 @@ ORDER BY name;
 
 -- name: CreateUser :execresult
 INSERT INTO users(
-    name, password, designation, employee_id, created_at
+    name, password, designation, employee_id, is_admin, created_at
 ) VALUES (
-    ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?
 );
 
 -- name: DeleteUser :exec

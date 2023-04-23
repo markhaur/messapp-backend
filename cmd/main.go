@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -71,6 +72,7 @@ func main() {
 		}()
 	}
 
+	fmt.Printf("userRepository: %v\n", userRepository)
 	var userService userlist.Service
 	userService = userlist.NewService(userRepository)
 	userService = userlist.LoggingMiddleware(logger)(userService)
@@ -87,6 +89,8 @@ func main() {
 	mux.Handle("/userlist/v1/", userlist.NewServer(userService, logger))
 	mux.Handle("/resvlist/v1/", reservations.NewServer(reservationService, logger))
 	mux.Handle("/auth/v1/", auth.NewServer(authService, logger))
+
+	// handler := enableCors(mux)
 
 	server := &http.Server{
 		Addr:         config.ServerAddress,
@@ -112,4 +116,17 @@ func main() {
 		logger.Log("msg", "could not shutdown http server", "err", err)
 	}
 
+}
+
+func enableCors(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With")
+		if req.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		handler.ServeHTTP(w, req)
+	})
 }

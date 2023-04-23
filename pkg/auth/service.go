@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -46,6 +47,7 @@ func NewService(repo pkg.UserRepository) Service {
 }
 
 func (s *service) Login(ctx context.Context, request LoginRequest) (*LoginResponse, error) {
+	fmt.Printf("service: %v, repository: %v\n", s, s.repository)
 	user, err := s.repository.FindByEmployeeID(ctx, request.EmployeeID)
 	if err != nil {
 		return nil, err

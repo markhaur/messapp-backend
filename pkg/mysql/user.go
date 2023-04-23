@@ -17,7 +17,7 @@ func NewUserRepository(db *sql.DB) pkg.UserRepository {
 }
 
 func (u *userRepository) Insert(ctx context.Context, user *pkg.User) error {
-	inserted, err := u.queries.CreateUser(ctx, gen.CreateUserParams{Name: user.Name, Password: user.Password, Designation: user.Designation, EmployeeID: user.EmployeeID, CreatedAt: user.CreatedAt})
+	inserted, err := u.queries.CreateUser(ctx, gen.CreateUserParams{Name: user.Name, Password: user.Password, Designation: user.Designation, EmployeeID: user.EmployeeID, IsAdmin: user.IsAdmin, CreatedAt: user.CreatedAt})
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (u *userRepository) FindAll(ctx context.Context) ([]pkg.User, error) {
 
 	var list []pkg.User
 	for _, user := range users {
-		list = append(list, pkg.User{ID: user.ID, Name: user.Name, Password: user.Password, Designation: user.Designation, EmployeeID: user.EmployeeID})
+		list = append(list, pkg.User{ID: user.ID, Name: user.Name, Password: user.Password, Designation: user.Designation, IsAdmin: user.IsAdmin, EmployeeID: user.EmployeeID})
 	}
 	return list, nil
 }
@@ -43,7 +43,7 @@ func (u *userRepository) FindByID(ctx context.Context, id int64) (*pkg.User, err
 	if err != nil {
 		return nil, err
 	}
-	return &pkg.User{ID: user.ID, Name: user.Name, Password: user.Password, Designation: user.Designation, EmployeeID: user.EmployeeID, CreatedAt: user.CreatedAt}, nil
+	return &pkg.User{ID: user.ID, Name: user.Name, Password: user.Password, Designation: user.Designation, IsAdmin: user.IsAdmin, EmployeeID: user.EmployeeID, CreatedAt: user.CreatedAt}, nil
 }
 
 func (u *userRepository) FindByEmployeeID(ctx context.Context, employee_id string) (*pkg.User, error) {
@@ -51,7 +51,7 @@ func (u *userRepository) FindByEmployeeID(ctx context.Context, employee_id strin
 	if err != nil {
 		return nil, err
 	}
-	return &pkg.User{ID: user.ID, Name: user.Name, Password: user.Password, Designation: user.Designation, EmployeeID: user.EmployeeID, CreatedAt: user.CreatedAt}, nil
+	return &pkg.User{ID: user.ID, Name: user.Name, Password: user.Password, Designation: user.Designation, IsAdmin: user.IsAdmin, EmployeeID: user.EmployeeID, CreatedAt: user.CreatedAt}, nil
 }
 
 func (u *userRepository) Update(ctx context.Context, user *pkg.User) error {

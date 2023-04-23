@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     password text NOT NULL,
     designation text NOT NULL,
     employee_id text NOT NULL,
+    is_admin int NOT NULL,
     created_at TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP
 );
 
