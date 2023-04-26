@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -28,6 +27,8 @@ func main() {
 		if err := godotenv.Load(path); err != nil {
 			logger.Log("msg", "could not load .env file", "path", path, "err", err)
 		}
+	} else {
+		logger.Log("msg could not find MESSAPP_CONFIG_PATH env variable")
 	}
 
 	var config struct {
@@ -72,7 +73,6 @@ func main() {
 		}()
 	}
 
-	fmt.Printf("userRepository: %v\n", userRepository)
 	var userService userlist.Service
 	userService = userlist.NewService(userRepository)
 	userService = userlist.LoggingMiddleware(logger)(userService)
@@ -90,14 +90,14 @@ func main() {
 	mux.Handle("/resvlist/v1/", reservations.NewServer(reservationService, logger))
 	mux.Handle("/auth/v1/", auth.NewServer(authService, logger))
 
-	// handler := enableCors(mux)
+	handler := enableCors(mux)
 
 	server := &http.Server{
 		Addr:         config.ServerAddress,
 		WriteTimeout: config.ServerWriteTimeout,
 		ReadTimeout:  config.ServerReadTimeout,
 		IdleTimeout:  config.ServerIdleTimeout,
-		Handler:      mux,
+		Handler:      handler,
 	}
 
 	sig := make(chan os.Signal, 1)

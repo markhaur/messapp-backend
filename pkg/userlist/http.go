@@ -70,6 +70,7 @@ func (s *server) handleSaveUser() http.HandlerFunc {
 		Designation string `json:"designation"`
 		EmployeeID  string `json:"employeeid"`
 		IsAdmin     int32  `json:"admin"`
+		IsActive    int32  `json:"active"`
 	}
 	type response struct {
 		ID          int64     `json:"id"`
@@ -77,6 +78,7 @@ func (s *server) handleSaveUser() http.HandlerFunc {
 		Designation string    `json:"designation"`
 		EmployeeID  string    `json:"employeeID"`
 		IsAdmin     int32     `json:"admin"`
+		IsActive    int32     `json:"active"`
 		CreatedAt   time.Time `json:"createdAt"`
 	}
 
@@ -87,13 +89,13 @@ func (s *server) handleSaveUser() http.HandlerFunc {
 			return
 		}
 
-		user, err := s.service.Save(r.Context(), pkg.User{Name: req.Name, Designation: req.Designation, EmployeeID: req.EmployeeID, IsAdmin: req.IsAdmin})
+		user, err := s.service.Save(r.Context(), pkg.User{Name: req.Name, Designation: req.Designation, EmployeeID: req.EmployeeID, IsActive: req.IsActive, IsAdmin: req.IsAdmin})
 		if err != nil {
 			writeError(w, err)
 			return
 		}
 		w.Header().Set(contentTypeKey, contentTypeValue)
-		json.NewEncoder(w).Encode(response{ID: user.ID, Name: user.Name, Designation: user.Designation, EmployeeID: user.EmployeeID, IsAdmin: user.IsAdmin, CreatedAt: user.CreatedAt})
+		json.NewEncoder(w).Encode(response{ID: user.ID, Name: user.Name, Designation: user.Designation, EmployeeID: user.EmployeeID, IsActive: user.IsActive, IsAdmin: user.IsAdmin, CreatedAt: user.CreatedAt})
 	}
 }
 
@@ -104,6 +106,7 @@ func (s *server) handleListUsers() http.HandlerFunc {
 		Designation string    `json:"designation"`
 		EmployeeID  string    `json:"employeeID"`
 		IsAdmin     int32     `json:"admin"`
+		IsActive    int32     `json:"active"`
 		CreatedAt   time.Time `json:"createdAt"`
 	}
 	type response []user
@@ -117,7 +120,7 @@ func (s *server) handleListUsers() http.HandlerFunc {
 
 		resp := make(response, 0, len(list))
 		for _, v := range list {
-			resp = append(resp, user{ID: v.ID, Name: v.Name, Designation: v.Designation, EmployeeID: v.EmployeeID, IsAdmin: v.IsAdmin, CreatedAt: v.CreatedAt})
+			resp = append(resp, user{ID: v.ID, Name: v.Name, Designation: v.Designation, EmployeeID: v.EmployeeID, IsActive: v.IsActive, IsAdmin: v.IsAdmin, CreatedAt: v.CreatedAt})
 		}
 		w.Header().Set(contentTypeKey, contentTypeValue)
 		json.NewEncoder(w).Encode(resp)
@@ -147,6 +150,7 @@ func (s *server) handleUpdateUser() http.HandlerFunc {
 		Designation string `json:"designation"`
 		EmployeeID  string `json:"employeeid"`
 		IsAdmin     int32  `json:"admin"`
+		IsActive    int32  `json:"active"`
 	}
 	type response struct {
 		ID          int64     `json:"id"`
@@ -154,6 +158,7 @@ func (s *server) handleUpdateUser() http.HandlerFunc {
 		Designation string    `json:"designation"`
 		EmployeeID  string    `json:"employeeID"`
 		IsAdmin     int32     `json:"admin"`
+		IsActive    int32     `json:"active"`
 		CreatedAt   time.Time `json:"createdAt"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -169,7 +174,7 @@ func (s *server) handleUpdateUser() http.HandlerFunc {
 			return
 		}
 
-		user, isCreated, err := s.service.Update(r.Context(), pkg.User{ID: id, Name: req.Name, Password: req.Password, Designation: req.Designation, EmployeeID: req.EmployeeID, IsAdmin: req.IsAdmin})
+		user, isCreated, err := s.service.Update(r.Context(), pkg.User{ID: id, Name: req.Name, Password: req.Password, Designation: req.Designation, EmployeeID: req.EmployeeID, IsActive: req.IsActive, IsAdmin: req.IsAdmin})
 		if err != nil {
 			writeError(w, err)
 			return
@@ -180,7 +185,7 @@ func (s *server) handleUpdateUser() http.HandlerFunc {
 		}
 
 		w.Header().Set(contentTypeKey, contentTypeValue)
-		json.NewEncoder(w).Encode(response{ID: user.ID, Name: user.Name, Designation: user.Designation, EmployeeID: user.EmployeeID})
+		json.NewEncoder(w).Encode(response{ID: user.ID, Name: user.Name, Designation: user.Designation, IsActive: user.IsActive, IsAdmin: user.IsAdmin, EmployeeID: user.EmployeeID})
 	}
 }
 

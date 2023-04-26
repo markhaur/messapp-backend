@@ -28,6 +28,10 @@ func NewServer(service Service, logger log.Logger) http.Handler {
 	handleGetReservations = s.handleGetReservation()
 	handleGetReservations = httpLoggingMiddleware(logger, "handleGetReservations")(handleGetReservations)
 
+	var handleGetReservationsByID http.Handler
+	handleGetReservationsByID = s.handleGetReservationByID()
+	handleGetReservationsByID = httpLoggingMiddleware(logger, "handleGetReservations")(handleGetReservationsByID)
+
 	var handleRemoveReservation http.Handler
 	handleRemoveReservation = s.handleRemoveReservation()
 	handleRemoveReservation = httpLoggingMiddleware(logger, "handleRemoveReservation")(handleRemoveReservation)
@@ -40,7 +44,9 @@ func NewServer(service Service, logger log.Logger) http.Handler {
 
 	router.Handle("POST", "/resvlist/v1/reservations", handleSaveReservation)
 	router.Handle("GET", "/resvlist/v1/reservations", handleListReservations)
-	router.Handle("GET", "/resvlist/v1/reservations/:id", handleGetReservations)
+	router.Handle("GET", "/resvlist/v1/reservations/:date", handleGetReservations)
+	// router.Handle("GET", "/resvlist/v1/reservations/:id", handleGetReservations)
+	router.Handle("GET", "/resvlist/v1/reservationsbyid/:user_id", handleGetReservationsByID)
 	router.Handle("DELETE", "/resvlist/v1/reservation/:id", handleRemoveReservation)
 	router.Handle("PUT", "/resvlist/v1/reservation/:id", handleUpdateReservation)
 
@@ -105,6 +111,7 @@ func (s *server) handleGetReservation() http.HandlerFunc {
 	type reservation struct {
 		ID              int64               `json:"id"`
 		UserID          int64               `json:"user_id"`
+		Name            string              `json:"name"`
 		ReservationTime time.Time           `json:"reservation_time"`
 		Type            pkg.ReservationType `json:"type"`
 		NoOfGuests      int64               `json:"no_of_guests"`
@@ -113,16 +120,15 @@ func (s *server) handleGetReservation() http.HandlerFunc {
 	type response []reservation
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reservations []pkg.Reservation
-		id, err := strconv.ParseInt(way.Param(r.Context(), "id"), 10, 64)
-		if err == nil {
-			resv, err := s.service.FindByID(r.Context(), id)
-			if err != nil {
-				writeError(w, err)
-				return
-			}
-			reservations = append(reservations, *resv)
-
-		}
+		// id, err := strconv.ParseInt(way.Param(r.Context(), "id"), 10, 64)
+		// if err == nil {
+		// 	resv, err := s.service.FindByID(r.Context(), id)
+		// 	if err != nil {
+		// 		writeError(w, err)
+		// 		return
+		// 	}
+		// 	reservations = append(reservations, *resv)
+		// }
 
 		user_id, err := strconv.ParseInt(way.Param(r.Context(), "user_id"), 10, 64)
 		if err == nil {
@@ -134,8 +140,7 @@ func (s *server) handleGetReservation() http.HandlerFunc {
 			reservations = resvs
 		}
 
-		// TODO: need to specify date format
-		format := ""
+		format := "2006-01-02"
 		date, err := time.Parse(format, way.Param(r.Context(), "date"))
 		if err == nil {
 			resvs, err := s.service.FindByDate(r.Context(), date)
@@ -149,7 +154,41 @@ func (s *server) handleGetReservation() http.HandlerFunc {
 		resp := make(response, 0, len(reservations))
 
 		for _, resv := range reservations {
-			resp = append(resp, reservation{ID: resv.ID, UserID: resv.UserID, ReservationTime: resv.ReservationTime, Type: resv.Type, NoOfGuests: resv.NoOfGuests, CreatedAt: resv.CreatedAt})
+			resp = append(resp, reservation{ID: resv.ID, UserID: resv.UserID, Name: resv.Name, ReservationTime: resv.ReservationTime, Type: resv.Type, NoOfGuests: resv.NoOfGuests, CreatedAt: resv.CreatedAt})
+		}
+
+		w.Header().Set(contentTypeKey, contentTypeValue)
+		json.NewEncoder(w).Encode(resp)
+	}
+}
+
+func (s *server) handleGetReservationByID() http.HandlerFunc {
+	type reservation struct {
+		ID              int64               `json:"id"`
+		UserID          int64               `json:"user_id"`
+		Name            string              `json:"name"`
+		ReservationTime time.Time           `json:"reservation_time"`
+		Type            pkg.ReservationType `json:"type"`
+		NoOfGuests      int64               `json:"no_of_guests"`
+		CreatedAt       time.Time           `json:"createdAt"`
+	}
+	type response []reservation
+	return func(w http.ResponseWriter, r *http.Request) {
+		var reservations []pkg.Reservation
+
+		user_id, err := strconv.ParseInt(way.Param(r.Context(), "user_id"), 10, 64)
+		if err == nil {
+			resvs, err := s.service.FindByEmployeeID(r.Context(), user_id)
+			if err != nil {
+				writeError(w, err)
+				return
+			}
+			reservations = resvs
+		}
+
+		resp := make(response, 0, len(reservations))
+		for _, resv := range reservations {
+			resp = append(resp, reservation{ID: resv.ID, UserID: resv.UserID, Name: resv.Name, ReservationTime: resv.ReservationTime, Type: resv.Type, NoOfGuests: resv.NoOfGuests, CreatedAt: resv.CreatedAt})
 		}
 
 		w.Header().Set(contentTypeKey, contentTypeValue)
@@ -159,12 +198,13 @@ func (s *server) handleGetReservation() http.HandlerFunc {
 
 func (s *server) handleListReservations() http.HandlerFunc {
 	type reservation struct {
-		ID              int64
-		UserID          int64
-		ReservationTime time.Time
-		Type            pkg.ReservationType
-		NoOfGuests      int64
-		CreatedAt       time.Time
+		ID              int64               `json:"id"`
+		UserID          int64               `json:"user_id"`
+		Name            string              `json:"name"`
+		ReservationTime time.Time           `json:"reservation_time"`
+		Type            pkg.ReservationType `json:"type"`
+		NoOfGuests      int64               `json:"no_of_guests"`
+		CreatedAt       time.Time           `json:"createdAt"`
 	}
 	type response []reservation
 
@@ -177,7 +217,7 @@ func (s *server) handleListReservations() http.HandlerFunc {
 
 		resp := make(response, 0, len(list))
 		for _, v := range list {
-			resp = append(resp, reservation{ID: v.ID, UserID: v.UserID, ReservationTime: v.ReservationTime, Type: v.Type, NoOfGuests: v.NoOfGuests, CreatedAt: v.CreatedAt})
+			resp = append(resp, reservation{ID: v.ID, UserID: v.UserID, Name: v.Name, ReservationTime: v.ReservationTime, Type: v.Type, NoOfGuests: v.NoOfGuests, CreatedAt: v.CreatedAt})
 		}
 		w.Header().Set(contentTypeKey, contentTypeValue)
 		json.NewEncoder(w).Encode(resp)

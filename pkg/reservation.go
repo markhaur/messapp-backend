@@ -30,6 +30,7 @@ func (r ReservationType) String() string {
 type Reservation struct {
 	ID              int64
 	UserID          int64
+	Name            string
 	ReservationTime time.Time
 	Type            ReservationType
 	NoOfGuests      int64

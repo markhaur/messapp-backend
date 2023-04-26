@@ -1,17 +1,21 @@
 -- name: GetReservationsByEmployeeID :many
-SELECT * FROM reservations
+SELECT reservations.*, users.name FROM reservations
+INNER JOIN users ON reservations.user_id = users.id
 WHERE user_id = ?;
 
 -- name: GetReservationByID :one
-SELECT * FROM reservations
-WHERE id = ? LIMIT 1;
+SELECT reservations.*, users.name FROM reservations
+INNER JOIN users ON reservations.user_id = users.id
+WHERE reservations.id = ? LIMIT 1;
 
 -- name: GetReservationsByDate :many
-SELECT * FROM reservations
-where reservation_time = ?;
+SELECT reservations.*, users.name FROM reservations
+INNER JOIN users ON reservations.user_id = users.id
+WHERE DATE(reservation_time) = DATE(?);
 
 -- name: ListReservations :many
-SELECT * FROM reservations
+SELECT reservations.*, users.name FROM reservations
+INNER JOIN users ON reservations.user_id = users.id
 ORDER BY reservation_time desc;
 
 -- name: CreateReservation :execresult

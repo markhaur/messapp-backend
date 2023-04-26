@@ -60,6 +60,7 @@ func (s *server) handleLogin() http.HandlerFunc {
 		Name        string    `json:"name"`
 		Designation string    `json:"designation"`
 		EmployeeID  string    `json:"employeeid"`
+		IsAdmin     int32     `json:"admin"`
 		CreatedAt   time.Time `json:"createdAt"`
 		Token       string    `json:"token"`
 	}
@@ -74,10 +75,11 @@ func (s *server) handleLogin() http.HandlerFunc {
 		lr, err := s.service.Login(r.Context(), LoginRequest{EmployeeID: req.EmployeeID, Password: req.Password})
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(err.Error()))
 			return
 		}
 		w.Header().Set(contentTypeKey, contentTypeValue)
-		json.NewEncoder(w).Encode(response{ID: lr.User.ID, Name: lr.User.Name, Designation: lr.User.Designation, EmployeeID: lr.User.EmployeeID, CreatedAt: lr.User.CreatedAt, Token: lr.Token})
+		json.NewEncoder(w).Encode(response{ID: lr.User.ID, Name: lr.User.Name, Designation: lr.User.Designation, IsAdmin: lr.User.IsAdmin, EmployeeID: lr.User.EmployeeID, CreatedAt: lr.User.CreatedAt, Token: lr.Token})
 	}
 }
 

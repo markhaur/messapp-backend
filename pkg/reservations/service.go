@@ -38,13 +38,15 @@ func (s *service) Save(ctx context.Context, reservation pkg.Reservation) (*pkg.R
 }
 
 func (s *service) FindByID(ctx context.Context, id int64) (*pkg.Reservation, error) {
-	return nil, nil
+	return s.repository.FindByID(ctx, id)
 }
+
 func (s *service) FindByEmployeeID(ctx context.Context, id int64) ([]pkg.Reservation, error) {
-	return nil, nil
+	return s.repository.FindByEmployeeID(ctx, id)
 }
-func (s *service) FindByDate(ctx context.Context, id time.Time) ([]pkg.Reservation, error) {
-	return nil, nil
+
+func (s *service) FindByDate(ctx context.Context, date time.Time) ([]pkg.Reservation, error) {
+	return s.repository.FindByDate(ctx, date)
 }
 
 func (s service) List(ctx context.Context) ([]pkg.Reservation, error) {

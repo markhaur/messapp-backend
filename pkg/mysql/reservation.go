@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/markhaur/messapp-backend/pkg"
@@ -35,7 +36,7 @@ func (r *reservationRepository) FindAll(ctx context.Context) ([]pkg.Reservation,
 
 	var list []pkg.Reservation
 	for _, reservation := range reservations {
-		list = append(list, pkg.Reservation{ID: reservation.ID, UserID: reservation.UserID, ReservationTime: reservation.ReservationTime, Type: pkg.ReservationType(reservation.Type), NoOfGuests: reservation.NoOfGuests})
+		list = append(list, pkg.Reservation{ID: reservation.ID, UserID: reservation.UserID, Name: reservation.Name, ReservationTime: reservation.ReservationTime, Type: pkg.ReservationType(reservation.Type), NoOfGuests: reservation.NoOfGuests})
 	}
 	return list, nil
 }
@@ -45,7 +46,7 @@ func (r *reservationRepository) FindByID(ctx context.Context, id int64) (*pkg.Re
 	if err != nil {
 		return nil, err
 	}
-	return &pkg.Reservation{ID: reservation.ID, UserID: reservation.UserID, ReservationTime: reservation.ReservationTime, Type: pkg.ReservationType(reservation.Type), NoOfGuests: reservation.NoOfGuests, CreatedAt: reservation.CreatedAt}, nil
+	return &pkg.Reservation{ID: reservation.ID, UserID: reservation.UserID, Name: reservation.Name, ReservationTime: reservation.ReservationTime, Type: pkg.ReservationType(reservation.Type), NoOfGuests: reservation.NoOfGuests, CreatedAt: reservation.CreatedAt}, nil
 }
 
 func (r *reservationRepository) FindByEmployeeID(ctx context.Context, employee_id int64) ([]pkg.Reservation, error) {
@@ -56,12 +57,13 @@ func (r *reservationRepository) FindByEmployeeID(ctx context.Context, employee_i
 
 	var list []pkg.Reservation
 	for _, reservation := range reservations {
-		list = append(list, pkg.Reservation{ID: reservation.ID, UserID: reservation.UserID, ReservationTime: reservation.ReservationTime, Type: pkg.ReservationType(reservation.Type), NoOfGuests: reservation.NoOfGuests, CreatedAt: reservation.CreatedAt})
+		list = append(list, pkg.Reservation{ID: reservation.ID, UserID: reservation.UserID, Name: reservation.Name, ReservationTime: reservation.ReservationTime, Type: pkg.ReservationType(reservation.Type), NoOfGuests: reservation.NoOfGuests, CreatedAt: reservation.CreatedAt})
 	}
 	return list, nil
 }
 
 func (r *reservationRepository) FindByDate(ctx context.Context, date time.Time) ([]pkg.Reservation, error) {
+	fmt.Printf("FindByDate -> date: %v\n", date)
 	reservations, err := r.queries.GetReservationsByDate(ctx, date)
 	if err != nil {
 		return nil, err
@@ -69,7 +71,7 @@ func (r *reservationRepository) FindByDate(ctx context.Context, date time.Time) 
 
 	var list []pkg.Reservation
 	for _, reservation := range reservations {
-		list = append(list, pkg.Reservation{ID: reservation.ID, UserID: reservation.UserID, ReservationTime: reservation.ReservationTime, Type: pkg.ReservationType(reservation.Type), NoOfGuests: reservation.NoOfGuests, CreatedAt: reservation.CreatedAt})
+		list = append(list, pkg.Reservation{ID: reservation.ID, UserID: reservation.UserID, Name: reservation.Name, ReservationTime: reservation.ReservationTime, Type: pkg.ReservationType(reservation.Type), NoOfGuests: reservation.NoOfGuests, CreatedAt: reservation.CreatedAt})
 	}
 	return list, nil
 }

@@ -8,13 +8,13 @@ WHERE id = ? LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM users
-ORDER BY name;
+ORDER BY created_at DESC;
 
 -- name: CreateUser :execresult
 INSERT INTO users(
-    name, password, designation, employee_id, is_admin, created_at
+    name, password, designation, employee_id, is_admin, created_at, is_active
 ) VALUES (
-    ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?
 );
 
 -- name: DeleteUser :exec

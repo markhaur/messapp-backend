@@ -18,6 +18,7 @@ type User struct {
 	Designation string
 	EmployeeID  string
 	IsAdmin     int32
+	IsActive    int32
 	CreatedAt   time.Time
 }
 
