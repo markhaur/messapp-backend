@@ -16,3 +16,14 @@ services:
       MYSQL_DATABASE: messapp
       MYSQL_USER: messapp
       MYSQL_PASSWORD: messapp
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      - MESSAPP_CONFIG_PATH=./.env
+    depends_on:
+      - db
+    command: [ "/app/main" ]
